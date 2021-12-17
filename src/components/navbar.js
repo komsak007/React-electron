@@ -1,33 +1,35 @@
 import React from "react";
-import { Layout, Menu, Popover } from "antd";
+import { Layout, Menu } from "antd";
 import { useHistory } from "react-router-dom";
-import {
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { HomeOutlined, AppstoreOutlined } from "@ant-design/icons";
 
 const Navbar = () => {
   const { SubMenu } = Menu;
   const history = useHistory();
 
-  const user = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
 
   return (
     <Layout.Header className="header" style={{ margin: 0, padding: 0 }}>
       <Menu selectedKeys={3} mode="horizontal">
         <Menu.Item
           key="home"
-          icon={<MailOutlined />}
-          onClick={() => history.push("/")}
+          icon={<HomeOutlined />}
+          onClick={() => {
+            localStorage.setItem("path", null);
+            history.push("/");
+          }}
         >
           Home
         </Menu.Item>
         <Menu.Item
           key="about"
           icon={<AppstoreOutlined />}
-          onClick={() => history.push("/about")}
-          disabled={user ? false : true}
+          onClick={() => {
+            localStorage.setItem("path", null);
+            history.push("/");
+          }}
+          disabled={token ? false : true}
         >
           About
         </Menu.Item>
@@ -61,10 +63,11 @@ const Navbar = () => {
             <Menu.Item key="setting:4">Option 4</Menu.Item>
           </Menu.ItemGroup>
         </SubMenu> */}
-        {user ? (
+        {token ? (
           <Menu.Item
             key="logout"
             onClick={() => {
+              localStorage.removeItem("token");
               localStorage.removeItem("user");
               history.push("/login");
             }}

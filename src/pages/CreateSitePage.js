@@ -1,12 +1,84 @@
 import React, { useState } from "react";
 import { Layout, Form, Input, Button, Col, Row, Checkbox, Radio } from "antd";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 import Navbar from "../components/navbar";
 import SideBar from "../components/sideBar";
 import "antd/dist/antd.css";
 
-export const AboutPage = () => {
+export const CreateSitePage = () => {
   const { Content } = Layout;
+  const history = useHistory();
+
+  const [data, setData] = useState({
+    site_id: "",
+    site_name: "",
+    site_code: "",
+    site_type: "",
+    organization: "",
+    category: "",
+    power_supply: "",
+    state: "",
+    region: "",
+    location: "",
+    city: "",
+    municipality: "",
+    zip_code: "",
+    elevation: "",
+    master_elevation: "",
+    latitude: "",
+    longitude: "",
+    network: "",
+    equipment_owner: "",
+    land_owner: "",
+    equipment_housing: "",
+    site_topography: "",
+    description: "",
+  });
+
+  const handleChange = (name) => (e) => {
+    // console.log(`${name} = ${e.target.value}`);
+    setData({ ...data, [name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
+    await axios
+      .post("http://localhost:8000/api/site/create", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((result) => {
+        setData({});
+        toast.success("Site Created", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            history.push("/");
+          },
+        });
+      })
+      .catch((err) => {
+        toast.error(err.response.data.err, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    // console.log(data);
+  };
 
   return (
     <Layout style={{ height: "auto" }}>
@@ -42,25 +114,31 @@ export const AboutPage = () => {
                 >
                   <Form.Item style={{ marginBottom: 0 }}>
                     <Form.Item
-                      label="Site name"
-                      name="siteName"
+                      label="Site Id"
+                      name="site_id"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Site name" />
+                      <Input
+                        placeholder="Site Id"
+                        onChange={handleChange("site_id")}
+                      />
                     </Form.Item>
                     <Form.Item
-                      label="Elevation"
-                      name="elevation"
+                      label="Site Name"
+                      name="site_name"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
                         margin: "0 8px",
                       }}
                     >
-                      <Input placeholder="Input Elevation" />
+                      <Input
+                        placeholder="Site Name"
+                        onChange={handleChange("site_name")}
+                      />
                     </Form.Item>
 
                     <Form.Item
@@ -71,66 +149,40 @@ export const AboutPage = () => {
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Site Code" />
+                      <Input
+                        placeholder="Site Code"
+                        onChange={handleChange("site_code")}
+                      />
                     </Form.Item>
                   </Form.Item>
 
                   <Form.Item style={{ marginBottom: 0 }}>
-                    <Form.Item
-                      label="Mast Elevation"
-                      name="mastElevation"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input Mast Elevation" />
-                    </Form.Item>
                     <Form.Item
                       label="Site Type"
-                      name="siteType"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                        margin: "0 8px",
-                      }}
-                    >
-                      <Input placeholder="Input Site Type" />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Latitude"
-                      name="latitude"
+                      name="site_type"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Latitude" />
+                      <Input
+                        placeholder="Site Type"
+                        onChange={handleChange("site_type")}
+                      />
                     </Form.Item>
-                  </Form.Item>
-
-                  <Form.Item style={{ marginBottom: 0 }}>
                     <Form.Item
                       label="Organization"
                       name="organization"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input Organization" />
-                    </Form.Item>
-                    <Form.Item
-                      label="Longitude"
-                      name="longitude"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
                         margin: "0 8px",
                       }}
                     >
-                      <Input placeholder="Input Longitude" />
+                      <Input
+                        placeholder="Organization"
+                        onChange={handleChange("organization")}
+                      />
                     </Form.Item>
 
                     <Form.Item
@@ -141,66 +193,40 @@ export const AboutPage = () => {
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Category" />
+                      <Input
+                        placeholder="Category"
+                        onChange={handleChange("category")}
+                      />
                     </Form.Item>
                   </Form.Item>
 
                   <Form.Item style={{ marginBottom: 0 }}>
-                    <Form.Item
-                      label="Network"
-                      name="network"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input Network" />
-                    </Form.Item>
                     <Form.Item
                       label="Power Supply"
-                      name="powerSupply"
+                      name="Power Supply"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Power Supply"
+                        onChange={handleChange("power_supply")}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="State"
+                      name="state"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
                         margin: "0 8px",
                       }}
                     >
-                      <Input placeholder="Input Power Supply" />
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Equipment Owner"
-                      name="equipmentOwner"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input Equipment Owner" />
-                    </Form.Item>
-                  </Form.Item>
-
-                  <Form.Item style={{ marginBottom: 0 }}>
-                    <Form.Item
-                      label="State/Province"
-                      name="State/Province"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input State/Province" />
-                    </Form.Item>
-                    <Form.Item
-                      label="Land Owner"
-                      name="landOwner"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                        margin: "0 8px",
-                      }}
-                    >
-                      <Input placeholder="Input Land Owner" />
+                      <Input
+                        placeholder="State"
+                        onChange={handleChange("state")}
+                      />
                     </Form.Item>
 
                     <Form.Item
@@ -211,66 +237,40 @@ export const AboutPage = () => {
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Region" />
+                      <Input
+                        placeholder="Region"
+                        onChange={handleChange("region")}
+                      />
                     </Form.Item>
                   </Form.Item>
 
                   <Form.Item style={{ marginBottom: 0 }}>
-                    <Form.Item
-                      label="Equipment Housing"
-                      name="equipmentHousing"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input Equipment Housing" />
-                    </Form.Item>
                     <Form.Item
                       label="Location"
                       name="location"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
-                        margin: "0 8px",
                       }}
                     >
-                      <Input placeholder="Input Location" />
+                      <Input
+                        placeholder="Location"
+                        onChange={handleChange("location")}
+                      />
                     </Form.Item>
-
-                    <Form.Item
-                      label="Site Topography"
-                      name="siteTopography"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input Site Topography" />
-                    </Form.Item>
-                  </Form.Item>
-
-                  <Form.Item style={{ marginBottom: 0 }}>
                     <Form.Item
                       label="City"
                       name="city"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
-                      }}
-                    >
-                      <Input placeholder="Input City" />
-                    </Form.Item>
-                    <Form.Item
-                      label="Description"
-                      name="description"
-                      style={{
-                        display: "inline-block",
-                        width: "calc(33% - 8px)",
                         margin: "0 8px",
                       }}
                     >
-                      <Input placeholder="Input Description" />
+                      <Input
+                        placeholder="City"
+                        onChange={handleChange("city")}
+                      />
                     </Form.Item>
 
                     <Form.Item
@@ -281,21 +281,174 @@ export const AboutPage = () => {
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Municipality" />
+                      <Input
+                        placeholder="Municipality"
+                        onChange={handleChange("municipality")}
+                      />
                     </Form.Item>
                   </Form.Item>
 
                   <Form.Item style={{ marginBottom: 0 }}>
                     <Form.Item
-                      label="Zip code"
-                      name="zipcode"
+                      label="Zip Code"
+                      name="zip_code"
                       style={{
                         display: "inline-block",
                         width: "calc(33% - 8px)",
                       }}
                     >
-                      <Input placeholder="Input Zip code" />
+                      <Input
+                        placeholder="Zip Code"
+                        onChange={handleChange("zip_code")}
+                      />
                     </Form.Item>
+                    <Form.Item
+                      label="Elevation"
+                      name="elevation"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                        margin: "0 8px",
+                      }}
+                    >
+                      <Input
+                        placeholder="Elevation"
+                        onChange={handleChange("elevation")}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Master Elevation"
+                      name="master_elevation"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Master Elevation"
+                        onChange={handleChange("master_elevation")}
+                      />
+                    </Form.Item>
+                  </Form.Item>
+
+                  <Form.Item style={{ marginBottom: 0 }}>
+                    <Form.Item
+                      label="Latitude"
+                      name="latitude"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Latitude"
+                        onChange={handleChange("latitude")}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Longitude"
+                      name="longitude"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                        margin: "0 8px",
+                      }}
+                    >
+                      <Input
+                        placeholder="Longitude"
+                        onChange={handleChange("longitude")}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Network"
+                      name="network"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Network"
+                        onChange={handleChange("network")}
+                      />
+                    </Form.Item>
+                  </Form.Item>
+
+                  <Form.Item style={{ marginBottom: 0 }}>
+                    <Form.Item
+                      label="Equipment Owner"
+                      name="equipment_owner"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Equipment Owner"
+                        onChange={handleChange("equipment_owner")}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Land Owner"
+                      name="land_owner"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                        margin: "0 8px",
+                      }}
+                    >
+                      <Input
+                        placeholder="Land Owner"
+                        onChange={handleChange("land_owner")}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Equipment Housing"
+                      name="equipment_housing"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Equipment Housing"
+                        onChange={handleChange("equipment_housing")}
+                      />
+                    </Form.Item>
+                  </Form.Item>
+
+                  <Form.Item style={{ marginBottom: 0 }}>
+                    <Form.Item
+                      label="Site Topography"
+                      name="site_topography"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                      }}
+                    >
+                      <Input
+                        placeholder="Site Topography"
+                        onChange={handleChange("site_topography")}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Description"
+                      name="description"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(33% - 8px)",
+                        margin: "0 8px",
+                      }}
+                    >
+                      <Input
+                        placeholder="Description"
+                        onChange={handleChange("description")}
+                      />
+                    </Form.Item>
+
                     <Form.Item
                       label=""
                       style={{
@@ -304,7 +457,13 @@ export const AboutPage = () => {
                         marginTop: "30px",
                       }}
                     >
-                      <Button>Button</Button>
+                      <Button
+                        type="primary"
+                        style={{ borderRadius: 5 }}
+                        onClick={handleSubmit}
+                      >
+                        Create Site
+                      </Button>
                     </Form.Item>
                   </Form.Item>
                 </Form>
@@ -316,7 +475,7 @@ export const AboutPage = () => {
                     backgroundColor: "#7070db",
                     border: "1px solid #7070db",
                     width: "0",
-                    height: "auto",
+                    height: "100%",
                   }}
                 ></div>
               </Col>

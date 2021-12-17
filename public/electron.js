@@ -18,7 +18,9 @@ function createWindow() {
     height: 1080,
     webPreferences: { nodeIntegration: true },
   });
-  mainWindow.setMenu(null);
+  mainWindow.maximize();
+  // mainWindow.setResizable(false);
+  // mainWindow.setMenu(null);
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000/"

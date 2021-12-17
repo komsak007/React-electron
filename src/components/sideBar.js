@@ -1,246 +1,114 @@
-import React, { useState } from "react";
-import { useHistory, Link } from "react-router-dom";
-import { Layout, Menu, Form, Input, Button, Tree, Switch } from "antd";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { Layout, Tree } from "antd";
 import {
-  BankOutlined,
   ApartmentOutlined,
   ApiOutlined,
-  SettingOutlined,
+  PlusCircleOutlined,
+  PlusSquareOutlined,
 } from "@ant-design/icons";
+import axios from "axios";
 
-import Navbar from "../components/navbar";
 import "antd/dist/antd.css";
-
-const treeData = [
-  {
-    title: "Site",
-    key: "0-0",
-    icon: <BankOutlined />,
-    children: [
-      {
-        title: "TRAT",
-        key: "0-0-0",
-        value: "123",
-        icon: <ApartmentOutlined />,
-        children: [
-          {
-            title: "PM10 [1]",
-            key: "0-0-0-0",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-0",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "PM2.5 [2]",
-            key: "0-0-0-1",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-1",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "CO [3]",
-            key: "0-0-0-3",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-3",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "NO2 [4]",
-            key: "0-0-0-4",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-4",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "SO2 [5]",
-            key: "0-0-0-5",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-5",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "O3 [6]",
-            key: "0-0-0-6",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-6",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "WS [7]",
-            key: "0-0-0-7",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-7",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "WD [8]",
-            key: "0-0-0-8",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-8",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "TEMP [9]",
-            key: "0-0-0-9",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-9",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "RH [10]",
-            key: "0-0-0-10",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-10",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "BP [11]",
-            key: "0-0-0-11",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-11",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "RAIN [12]",
-            key: "0-0-0-12",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-12",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-          {
-            title: "TEMP [13]",
-            key: "0-0-0-13",
-            icon: <ApiOutlined />,
-            children: [
-              {
-                title: "Calibration",
-                key: "0-0-0-0-13",
-                icon: <SettingOutlined />,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Sequence",
-    key: "0-1",
-    icon: <ApartmentOutlined />,
-    children: [
-      {
-        title: "parent 2-0",
-        key: "0-1-0",
-        icon: <ApartmentOutlined />,
-        children: [
-          { title: "leaf", key: "0-1-0-0", icon: <ApartmentOutlined /> },
-          { title: "leaf", key: "0-1-0-1", icon: <ApartmentOutlined /> },
-        ],
-      },
-    ],
-  },
-];
 
 const SideBar = () => {
   const { Sider } = Layout;
   const history = useHistory();
+  const TreeNode = Tree.TreeNode;
+  var token = localStorage.getItem("token");
 
-  const handleSelected = (e) => {
-    // console.log(e[0] == "0-0-0");
-    switch (e[0]) {
-      case "0-0-0":
-        history.push("/about");
-        break;
+  const [data, setData] = useState([]);
 
-      case "0-0-0-0":
-        history.push("/chanel");
-        break;
+  useEffect(() => {
+    loadData();
+  }, []);
 
-      case "0-0-0-0-0":
-        history.push("/calibrate");
-        break;
+  const loadData = async () => {
+    await axios.get("http://localhost:8000/api/site").then((result) => {
+      // console.log(result.data);
+      setData(result.data);
+    });
+  };
 
-      default:
-        break;
+  const handleSelect = (e) => {
+    const selects = e[0];
+    const select = selects ? selects.split(" ") : "";
+    const length = select.length;
+    var path = localStorage.getItem("path");
+
+    // Site
+    if (length === 1 && path !== select[0]) {
+      localStorage.setItem("path", select[0]);
+      history.push(`/site/${select[0]}`);
+    }
+    // Sensor create
+    else if (length === 2 && selects !== "create site" && select[1] === "add") {
+      history.push(`/${select[0]}/add`);
+    }
+    // Sensor Get
+    else if (length === 2 && selects !== "create site") {
+      history.push(`/${select[0]}/sensor/${select[1]}`);
+    }
+    // Create site
+    else if (selects === "create site") {
+      localStorage.setItem("path", null);
+      history.push("/site/create");
+    }
+    //home
+    else {
+      history.push("/");
     }
   };
 
   return (
-    <Sider
-      width={200}
-      className="site-layout-background"
-      style={{ backgroundColor: "#fff" }}
-    >
-      <div>
+    <>
+      <Sider
+        width={200}
+        className="site-layout-background"
+        style={{ backgroundColor: "#fff" }}
+      >
         <Tree
+          // multiple
           // showLine
+          disabled={token ? false : true}
           showIcon
-          defaultExpandedKeys={["0-0-0"]}
-          treeData={treeData}
-          onSelect={handleSelected}
-        />
-      </div>
-    </Sider>
+          onSelect={handleSelect}
+          style={{ display: token ? "" : "none" }}
+          // onExpand={(e) => console.log(e)}
+        >
+          <TreeNode
+            title={"Create Site"}
+            key={"create site"}
+            icon={<PlusSquareOutlined />}
+          />
+          {data.map((text, index, array) => (
+            <TreeNode
+              title={text.site_name}
+              key={text.site_name}
+              icon={<ApartmentOutlined />}
+            >
+              {array[index].sensor.map((sen) => (
+                <TreeNode
+                  title={sen}
+                  key={`${text.site_name} ${sen}`}
+                  icon={<ApiOutlined />}
+                />
+              ))}
+              <TreeNode
+                title={"Add Sensor"}
+                key={`${text.site_name} add`}
+                icon={<PlusCircleOutlined />}
+              />
+            </TreeNode>
+          ))}
+
+          {/* <TreeNode title="trang" key="trang">
+            <TreeNode title="talang" key="talang" />
+            <TreeNode title="chon" key="chon" />
+          </TreeNode> */}
+        </Tree>
+      </Sider>
+    </>
   );
 };
 export default SideBar;

@@ -1,11 +1,83 @@
-import React from "react";
-import { Col, Divider, Layout, Row, Form, Input, Checkbox, Radio } from "antd";
+import React, { useState } from "react";
+import { useParams, useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  Col,
+  Divider,
+  Layout,
+  Row,
+  Form,
+  Input,
+  Checkbox,
+  Radio,
+  Button,
+} from "antd";
+import axios from "axios";
 
 import Navbar from "../components/navbar";
 import SideBar from "../components/sideBar";
 
-export const ChanelPage = () => {
+export const AddSensorPage = () => {
   const { Content } = Layout;
+  const param = useParams();
+  const history = useHistory();
+
+  const [data, setData] = useState({
+    sensor_name: "",
+    chanel_address: "",
+    unit: "",
+    serial: "",
+    low_range: "",
+    high_range: "",
+    threshold: "",
+    hr_thresh: "",
+    pollutant_type: "",
+    view_format: "",
+    state: "",
+    average: "",
+  });
+
+  const handleChange = (name) => (e) => {
+    // console.log(`${name} = ${e.target.value}`);
+    setData({ ...data, [name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
+    axios
+      .post(`http://localhost:8000/api/${param.site_name}/add`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((result) => {
+        setData({});
+        toast.success(`Sensor Added in ${param.site_name} site`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            history.push("/");
+          },
+        });
+      })
+      .catch((err) => {
+        toast.error(err.response.data.err, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    // console.log(data);
+  };
 
   return (
     <Layout style={{ height: "auto" }}>
@@ -21,30 +93,39 @@ export const ChanelPage = () => {
               minHeight: 280,
             }}
           >
+            <h4>Add Sensor in "{param.site_name}"</h4>
             <Row>
               <Col span={8}>
                 <Form.Item
-                  label="Name"
-                  name="name"
+                  label="Sensor Name"
+                  name="sensor_name"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Sensor Name"
+                    onChange={handleChange("sensor_name")}
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="Ch. Address"
-                  name="address"
+                  name="chanel_address"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -56,7 +137,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Unit"
+                    onChange={handleChange("unit")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -68,31 +153,43 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Serial #"
+                    onChange={handleChange("serial")}
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="Low Range"
-                  name="lowRange"
+                  name="low_range"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Low Range"
+                    onChange={handleChange("low_range")}
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="High Range"
-                  name="highRange"
+                  name="high_range"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="High Range"
+                    onChange={handleChange("high_range")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -104,43 +201,59 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Threshold %"
+                    onChange={handleChange("threshold")}
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="24Hr Threshold%"
-                  name="Threshold hour"
+                  name="hr_thresh"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="24Hr Threshold%"
+                    onChange={handleChange("hr_thresh")}
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="Pollutant Type"
-                  name="pollutant"
+                  name="pollutant_type"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Pollutant Type"
+                    onChange={handleChange("pollutant_type")}
+                  />
                 </Form.Item>
 
                 <Form.Item
                   label="View Format"
-                  name="viewFormat"
+                  name="view_format"
                   style={{
                     width: "calc(80%)",
                     marginBottom: 3,
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="View Format"
+                    onChange={handleChange("view_format")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -152,7 +265,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="State"
+                    onChange={handleChange("state")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -164,7 +281,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Average"
+                    onChange={handleChange("average")}
+                  />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -177,7 +298,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -189,7 +314,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -212,7 +341,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -224,12 +357,18 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
                 <br />
 
                 <p style={{ marginBottom: 0 }}>Linear Correction</p>
-                <p style={{ marginBottom: 0 }}>A B</p>
+                <p style={{ marginBottom: 0 }}>
+                  A &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;B
+                </p>
 
                 <Form.Item
                   name="A"
@@ -240,7 +379,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -298,7 +441,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -310,7 +457,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -333,7 +484,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -372,7 +527,11 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Form.Item
@@ -384,13 +543,33 @@ export const ChanelPage = () => {
                     marginTop: 5,
                   }}
                 >
-                  <Input style={{ height: 25 }} />
+                  <Input
+                    style={{ height: 25 }}
+                    placeholder="Ch. Address"
+                    onChange={handleChange("chanel_address")}
+                  />
                 </Form.Item>
 
                 <Radio.Group onChange={null} value={1} disabled>
                   <Radio value={1}>By Timebase</Radio>
                   <Radio value={2}>By Instant</Radio>
                 </Radio.Group>
+                <Form.Item
+                  label=""
+                  style={{
+                    display: "inline-block",
+                    marginLeft: "8px",
+                    marginTop: "80px",
+                  }}
+                >
+                  <Button
+                    type="primary"
+                    style={{ borderRadius: 5 }}
+                    onClick={handleSubmit}
+                  >
+                    Create Site
+                  </Button>
+                </Form.Item>
               </Col>
             </Row>
             <Divider orientation="left">Row Bottom</Divider>

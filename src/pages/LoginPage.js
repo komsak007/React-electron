@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 import { Layout, Form, Input, Button } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
 import Navbar from "../components/navbar";
 import SideBar from "../components/sideBar";
@@ -12,11 +14,41 @@ const LoginPage = () => {
 
   const history = useHistory();
 
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const login = () => {
-    localStorage.setItem("user", name);
-    history.push("/");
+    axios
+      .post("http://localhost:8000/api/login", {
+        username,
+        password,
+      })
+      .then(({ data }) => {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        toast.success("Login Success", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+        history.push("/");
+      })
+      .catch((err) => {
+        toast.error(err.response.data.error, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    // history.push("/");
   };
 
   return (
@@ -38,7 +70,8 @@ const LoginPage = () => {
                 <Input
                   prefix={<UserOutlined />}
                   placeholder="Username"
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
                 />
               </FormItem>
               <FormItem>
@@ -46,6 +79,8 @@ const LoginPage = () => {
                   prefix={<KeyOutlined />}
                   type="password"
                   placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                 />
               </FormItem>
               <FormItem>
