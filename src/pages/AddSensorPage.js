@@ -567,7 +567,7 @@ export const AddSensorPage = () => {
                     style={{ borderRadius: 5 }}
                     onClick={handleSubmit}
                   >
-                    Create Site
+                    Create Sensor
                   </Button>
                 </Form.Item>
               </Col>

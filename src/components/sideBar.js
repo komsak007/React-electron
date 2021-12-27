@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Layout, Tree } from "antd";
+import { Layout, Tree, Spin } from "antd";
 import {
   ApartmentOutlined,
   ApiOutlined,
@@ -18,15 +18,17 @@ const SideBar = () => {
   var token = localStorage.getItem("token");
 
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
+    setLoading(true);
     await axios.get("http://localhost:8000/api/site").then((result) => {
-      // console.log(result.data);
       setData(result.data);
+      setLoading(false);
     });
   };
 
@@ -38,12 +40,13 @@ const SideBar = () => {
 
     // Site
     if (length === 1 && path !== select[0]) {
-      localStorage.setItem("path", select[0]);
       history.push(`/site/${select[0]}`);
+      localStorage.setItem("path", null);
     }
     // Sensor create
     else if (length === 2 && selects !== "create site" && select[1] === "add") {
       history.push(`/${select[0]}/add`);
+      localStorage.setItem("path", null);
     }
     // Sensor Get
     else if (length === 2 && selects !== "create site") {
@@ -51,8 +54,8 @@ const SideBar = () => {
     }
     // Create site
     else if (selects === "create site") {
-      localStorage.setItem("path", null);
       history.push("/site/create");
+      localStorage.setItem("path", null);
     }
     //home
     else {
@@ -67,46 +70,59 @@ const SideBar = () => {
         className="site-layout-background"
         style={{ backgroundColor: "#fff" }}
       >
-        <Tree
-          // multiple
-          // showLine
-          disabled={token ? false : true}
-          showIcon
-          onSelect={handleSelect}
-          style={{ display: token ? "" : "none" }}
-          // onExpand={(e) => console.log(e)}
-        >
-          <TreeNode
-            title={"Create Site"}
-            key={"create site"}
-            icon={<PlusSquareOutlined />}
-          />
-          {data.map((text, index, array) => (
+        {loading ? (
+          <div
+            style={{
+              margin: "20px 0",
+              marginBottom: "20px",
+              padding: "30px 50px",
+              textAlign: "center",
+            }}
+          >
+            <Spin size="large" tip="Loading..." />
+          </div>
+        ) : (
+          <Tree
+            // multiple
+            // showLine
+            disabled={token ? false : true}
+            showIcon
+            onSelect={handleSelect}
+            style={{ display: token ? "" : "none" }}
+            // onExpand={(e) => console.log(e)}
+          >
             <TreeNode
-              title={text.site_name}
-              key={text.site_name}
-              icon={<ApartmentOutlined />}
-            >
-              {array[index].sensor.map((sen) => (
-                <TreeNode
-                  title={sen}
-                  key={`${text.site_name} ${sen}`}
-                  icon={<ApiOutlined />}
-                />
-              ))}
+              title={"Create Site"}
+              key={"create site"}
+              icon={<PlusSquareOutlined />}
+            />
+            {data.map((text, index, array) => (
               <TreeNode
-                title={"Add Sensor"}
-                key={`${text.site_name} add`}
-                icon={<PlusCircleOutlined />}
-              />
-            </TreeNode>
-          ))}
+                title={text.site_name}
+                key={text.site_name}
+                icon={<ApartmentOutlined />}
+              >
+                {array[index].sensor.map((sen) => (
+                  <TreeNode
+                    title={sen}
+                    key={`${text.site_name} ${sen}`}
+                    icon={<ApiOutlined />}
+                  />
+                ))}
+                <TreeNode
+                  title={"Add Sensor"}
+                  key={`${text.site_name} add`}
+                  icon={<PlusCircleOutlined />}
+                />
+              </TreeNode>
+            ))}
 
-          {/* <TreeNode title="trang" key="trang">
+            {/* <TreeNode title="trang" key="trang">
             <TreeNode title="talang" key="talang" />
             <TreeNode title="chon" key="chon" />
           </TreeNode> */}
-        </Tree>
+          </Tree>
+        )}
       </Sider>
     </>
   );

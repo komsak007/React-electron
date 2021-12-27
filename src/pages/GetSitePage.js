@@ -66,38 +66,38 @@ export const GetSitePage = () => {
 
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
-    // await axios
-    //   .post("http://localhost:8000/api/site/create", data, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //   .then((result) => {
-    //     setData({});
-    //     toast.success("Site Created", {
-    //       position: "top-right",
-    //       autoClose: 2000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //       onClose: () => {
-    //         history.push("/");
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     toast.error(err.response.data.err, {
-    //       position: "top-right",
-    //       autoClose: 2000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //     });
-    //   });
+    await axios
+      .put(`http://localhost:8000/api/site/edit/${param.site_name}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((result) => {
+        setData({});
+        toast.success(`${result.data.msg}`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            history.push("/");
+          },
+        });
+      })
+      .catch((err) => {
+        toast.error(err.response.data.err, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
     console.log(data);
   };
 
@@ -146,7 +146,10 @@ export const GetSitePage = () => {
                       <Input
                         placeholder="Site Id"
                         onChange={handleChange("site_id")}
-                        defaultValue={data.site_name}
+                        style={{
+                          color: "red",
+                        }}
+                        disabled
                       />
                     </Form.Item>
                     <Form.Item
@@ -161,6 +164,10 @@ export const GetSitePage = () => {
                       <Input
                         placeholder="Site Name"
                         onChange={handleChange("site_name")}
+                        style={{
+                          color: "red",
+                        }}
+                        disabled
                       />
                     </Form.Item>
 
@@ -485,7 +492,7 @@ export const GetSitePage = () => {
                         style={{ borderRadius: 5 }}
                         onClick={handleSubmit}
                       >
-                        Create Site
+                        Update Site
                       </Button>
                     </Form.Item>
                   </Form.Item>

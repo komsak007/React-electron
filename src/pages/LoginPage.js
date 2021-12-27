@@ -75,7 +75,7 @@ const LoginPage = () => {
                 />
               </FormItem>
               <FormItem>
-                <Input
+                <Input.Password
                   prefix={<KeyOutlined />}
                   type="password"
                   placeholder="Password"
